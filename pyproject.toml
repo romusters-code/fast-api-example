@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "portfolio-embedding-endpoint"
+version = "0.1.0"
+description = "Personal project to showcase my abilities"
+authors = ["R. M. <anonymous@nope.com>"]
+license = "MIT"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = { version = "0.115.2", extras = ["all"] }
+torch = "2.3.1"
+transformers = "4.45.2"
+
+[tool.poetry.dev-dependencies]
+pytest = "8.3.3"
+pre-commit = " 4.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
