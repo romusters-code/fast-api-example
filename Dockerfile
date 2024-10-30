@@ -1,13 +1,15 @@
 FROM python:3.12
 
-EXPOSE 80
+EXPOSE 81
 
 WORKDIR /code
 
-COPY ./requirements.txt /code/requirements.txt
+RUN pip install --no-cache-dir poetry==1.8.4
 
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+COPY ./pyproject.toml /code/pyproject.toml
+
+RUN poetry install --no-cache
 
 COPY ./app /code/app
 
-CMD ["fastapi", "run", "app/main.py", "--port", "80"]
+CMD ["poetry", "run", "fastapi", "run", "app/main.py", "--port", "81"]
