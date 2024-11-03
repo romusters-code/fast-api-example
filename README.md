@@ -39,30 +39,38 @@ Go to e.g.: http://0.0.0.0:81/docs
 
 ## Docker
 
-First build the container:
+First navigate to the `function_app` folder and then build the container:
 
-`docker build -t api:latest .`
+`docker build -t functionapp:latest .`
 
 Then run the container:
 
-`docker run -p 81:81 -it api:latest`
+`docker run -p 80:80 -it functionapp:latest`
+
 
 ## Docker-compose
 
 `docker-compose up`
 
-### Bonus: caching in FastAPI!
 
-TODO
 
 ## Cloud
 
 ### Terraform
-Deploy resources using:
 
-``
+[Terraform information](infra/README.md)
 
 
 ### Azure
 Use the function app to 
 Go to e.g.: http://*.azurewebsites.com.
+
+# TODO: 
+- pre-commit
+- exception handling
+- logging
+- devops pipeline
+- integration test
+- create package from model and handler so that I can use it in Docker image
+- caching requests for FastAPI using external database
+
