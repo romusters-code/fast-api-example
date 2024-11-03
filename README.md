@@ -51,9 +51,7 @@ Then run the container:
 
 `docker-compose up`
 
-### Bonus: caching in FastAPI!
 
-TODO
 
 ## Cloud
 
@@ -66,3 +64,12 @@ Deploy resources using:
 ### Azure
 Use the function app to 
 Go to e.g.: http://*.azurewebsites.com.
+
+# TODO: 
+- pre-commit
+- logging
+- devops pipeline
+- integration test
+- create package from model and handler so that I can use it in Docker image
+- caching requests for FastAPI using external database
+
