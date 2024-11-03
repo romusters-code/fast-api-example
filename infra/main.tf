@@ -21,5 +21,5 @@ data "azurerm_client_config" "current" {
 # Create a resource group
 resource "azurerm_resource_group" "rg20embedding001" {
   name     = "rg20embedding001"
-  location = "North Europe"
+  location = "West Europe"
 }

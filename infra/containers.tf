@@ -4,4 +4,8 @@ resource "azurerm_container_registry" "acr" {
   location            = azurerm_resource_group.rg20embedding001.location
   sku                 = "Basic"
   admin_enabled       = true
+
+  identity {
+    type = "SystemAssigned"
+  }
 }

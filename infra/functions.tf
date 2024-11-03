@@ -66,13 +66,34 @@ resource "azurerm_container_app" "ca20embedding001" {
   resource_group_name          = azurerm_resource_group.rg20embedding001.name
   revision_mode                = "Single"
 
+  registry {
+    server               = azurerm_container_registry.acr.login_server
+    username             = azurerm_container_registry.acr.admin_username
+    password_secret_name = "docker-io-pass"
+
+  }
+
+  ingress {
+    allow_insecure_connections = false
+    external_enabled           = true
+    target_port                = 80
+    traffic_weight {
+      latest_revision = true
+      percentage = 100
+    }
+
+  }
   template {
     container {
       name   = "embedding-service-container-app"
-      image  = "embeddingcontainerregistry.azurecr.io/embedding_service"
+      image  = "EmbeddingContainerRegistry/embedding_service:latest"
       cpu    = 0.25
       memory = "0.5Gi"
     }
+  }
+  secret {
+    name  = "docker-io-pass"
+    value = azurerm_container_registry.acr.admin_password
   }
 }
 
