@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from model import Handler
+from app.model import Handler
 from pydantic import BaseModel
 
 
