@@ -1,6 +1,7 @@
 from fastapi import FastAPI
-from app.model import Handler
 from pydantic import BaseModel
+
+from app.model import Handler
 
 
 class TextInput(BaseModel):
