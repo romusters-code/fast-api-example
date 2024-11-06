@@ -19,7 +19,8 @@ Personal code to showcase my abilities, such as:
 - Docker
 - Terraform
 - Azure subscription
-- pre-commit
+- Pre-commit
+- Hadolint binary (when using pre-commit)
 
 
 # How to run
@@ -65,8 +66,7 @@ Then run the container:
 Use the function app to 
 Go to e.g.: http://*.azurewebsites.com.
 
-# TODO: 
-- pre-commit
+# TODO:
 - exception handling
 - logging
 - devops pipeline

@@ -67,7 +67,9 @@ class Handler:
         """
 
         # Tokenize the input
-        inputs = self.tokenizer(text, return_tensors="pt", padding=True, truncation=True)
+        inputs = self.tokenizer(
+            text, return_tensors="pt", padding=True, truncation=True
+        )
 
         # Forward pass
         return self.model(**inputs).pooler_output[0]
