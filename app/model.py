@@ -1,5 +1,9 @@
+import logging
+
 import torch
 from transformers import BertModel, BertTokenizer
+
+logger = logging.getLogger(__name__)
 
 
 class Handler:
@@ -20,6 +24,7 @@ class Handler:
         # Load the model and tokenizer with the Hugging Face Transformers library
         self.tokenizer = BertTokenizer.from_pretrained(model_name)
         self.model = BertModel.from_pretrained(model_name)
+        logger.info("Handler initialisation completed. ")
 
     def embed(self, text) -> list[float]:
         """

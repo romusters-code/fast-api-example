@@ -67,8 +67,6 @@ Use the function app to
 Go to e.g.: http://*.azurewebsites.com.
 
 # TODO:
-- exception handling
-- logging
 - devops pipeline
 - integration test
 - create package from model and handler so that I can use it in Docker image

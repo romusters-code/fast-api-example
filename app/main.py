@@ -1,7 +1,11 @@
-from fastapi import FastAPI
+import logging
+
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from app.model import Handler
+
+logger = logging.getLogger(__name__)
 
 
 class TextInput(BaseModel):
@@ -31,11 +35,17 @@ async def embed_text(text_input: TextInput) -> EmbeddingOutput:
     :param text_input: The text to embed.
     :return: The embedding of the input text as JSON.
     """
-    embedding = handler.embed(text_input.text)
-    return EmbeddingOutput(
-        embedding=embedding,
-        description="The list of float values representing the text embedding.",
-    )
+    logger.info(f"Embedding text: {text_input.text}")
+    try:
+        embedding = handler.embed(text_input.text)
+        return EmbeddingOutput(
+            embedding=embedding,
+            description="The list of float values representing the text embedding.",
+        )
+    except RuntimeError:
+        HTTPException(
+            status_code=404, detail="Something went wrong with creating an embedding."
+        )
 
 
 @app.post("/similarity")
