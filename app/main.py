@@ -1,3 +1,4 @@
+import json
 import logging
 from contextlib import asynccontextmanager
 from os import environ
@@ -13,7 +14,6 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Log format
 )
 logger = logging.getLogger(__name__)
-logger.info("START")
 
 
 class TextInput(BaseModel):
@@ -69,7 +69,8 @@ async def embed_text(text_input: TextInput) -> EmbeddingOutput:
     """
     logger.info(f"Embedding text: {text_input.text}")
     global redis_client
-    cached_embedding = redis_client.get(text_input.text)
+    cached_embedding = await redis_client.get(text_input.text)
+    cached_embedding = json.loads(cached_embedding)
     if cached_embedding:
         return EmbeddingOutput(
             embedding=cached_embedding,
@@ -78,7 +79,7 @@ async def embed_text(text_input: TextInput) -> EmbeddingOutput:
     else:
         try:
             embedding = handler.embed(text_input.text)
-            redis_client.set(text_input.text, str(embedding))
+            await redis_client.set(text_input.text, json.dumps(embedding))
             return EmbeddingOutput(
                 embedding=embedding,
                 description="The list of float values representing the text embedding.",
