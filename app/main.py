@@ -1,11 +1,19 @@
 import logging
+from contextlib import asynccontextmanager
+from os import environ
 
+import redis
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from app.model import Handler
 
+logging.basicConfig(
+    level=logging.INFO,  # Set the minimum logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Log format
+)
 logger = logging.getLogger(__name__)
+logger.info("START")
 
 
 class TextInput(BaseModel):
@@ -22,9 +30,33 @@ class SimilarityOutput(BaseModel):
     description: str | None = None
 
 
-app = FastAPI()
+class Redis:
+    def __init__(self):
+        self.client = redis.Redis(
+            host=environ.get("REDIS_HOST"),
+            port=environ.get("REDIS_PORT"),
+            decode_responses=True,
+        )  # Directly return responses in non-binary
+        logger.info(
+            f"Redis database connection established for {environ.get("REDIS_HOST")} on port {environ.get("REDIS_PORT")}"
+        )
+
+
+redis_client = None
+
+
+@asynccontextmanager  # Makes sure redis connection is closed after application shutdown
+async def lifespan(app: FastAPI):
+    global redis_client
+    redis_client = Redis().client
+    yield
+
+
+# TODO: what to do when there is no Redis database?
 
 handler = Handler()
+
+app = FastAPI(lifespan=lifespan)
 
 
 @app.post("/embed")
@@ -36,16 +68,26 @@ async def embed_text(text_input: TextInput) -> EmbeddingOutput:
     :return: The embedding of the input text as JSON.
     """
     logger.info(f"Embedding text: {text_input.text}")
-    try:
-        embedding = handler.embed(text_input.text)
+    global redis_client
+    cached_embedding = redis_client.get(text_input.text)
+    if cached_embedding:
         return EmbeddingOutput(
-            embedding=embedding,
+            embedding=cached_embedding,
             description="The list of float values representing the text embedding.",
         )
-    except RuntimeError:
-        HTTPException(
-            status_code=404, detail="Something went wrong with creating an embedding."
-        )
+    else:
+        try:
+            embedding = handler.embed(text_input.text)
+            redis_client.set(text_input.text, str(embedding))
+            return EmbeddingOutput(
+                embedding=embedding,
+                description="The list of float values representing the text embedding.",
+            )
+        except RuntimeError:
+            HTTPException(
+                status_code=404,
+                detail="Something went wrong with creating an embedding.",
+            )
 
 
 @app.post("/similarity")

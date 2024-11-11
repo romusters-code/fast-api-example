@@ -50,9 +50,11 @@ Then run the container:
 
 
 ## Docker-compose
+Redis can be used as a backend to cache FastAPI requests.
 
-`docker-compose up`
+Start the FastAPI and Redis database using: `docker-compose up`
 
+To rebuild, run: `docker-compose up --build`
 
 
 ## Cloud
@@ -67,6 +69,11 @@ Use the function app to
 Go to e.g.: http://*.azurewebsites.com.
 
 # TODO:
+- fix infra bug:  [DEBUG] POST https://management.azure.com/subscriptions/<subscription>/resourceGroups/rg20embedding001/providers/Microsoft.App/containerApps/ca20embedding001/listSecrets?api-version=2023-05-01 (status: 500): retrying in 1s (9 left)
+
+I do have the correct role set for the principal.
+
+
 - devops pipeline
 - integration test
 - create package from model and handler so that I can use it in Docker image
