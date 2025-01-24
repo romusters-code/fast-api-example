@@ -10,13 +10,13 @@ services:
       - REDIS_HOST=localhost  # Redis hostname (will be used in FastAPI to connect to Redis)
       - REDIS_PORT=6379   # Default Redis port
     depends_on:
-      - redis            # FastAPI app depends on Redis being up
+      - redis            
     ports:
       - "8080:8080"
     network_mode: host
 
   redis:
-    image: "redis:latest"  # Using the official Redis image
+    image: "redis:latest"  
     container_name: redis_cache
     ports:
       - "6379:6379"  # Expose Redis on port 6379

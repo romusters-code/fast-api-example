@@ -52,9 +52,9 @@ Then run the container:
 ## Docker-compose
 Redis can be used as a backend to cache FastAPI requests.
 
-Start the FastAPI and Redis database using: `docker-compose up`
+Start the FastAPI and Redis database using: `docker compose up`
 
-To rebuild, run: `docker-compose up --build`
+To rebuild, run: `docker compose up --build`
 
 
 ## Cloud
