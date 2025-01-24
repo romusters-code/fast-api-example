@@ -22,6 +22,9 @@ Personal code to showcase my abilities, such as:
 - Pre-commit
 - Hadolint binary (when using pre-commit)
 
+## Ansible
+Ansible can be used to install prerequisites: `ansible-playbook ansible.yaml --ask-become-pass`
+
 
 # How to run
 
@@ -30,7 +33,7 @@ To run the project locally using Python, run:
 
 `poetry run fastapi run app/main.py --host 0.0.0.0 --port 8080`
 
-TODO: try [uv](https://github.com/astral-sh/uv) instead of Poetry.
+
 
 Go to e.g.: http://0.0.0.0:81/docs
 
@@ -66,7 +69,12 @@ Then run the container:
 Use the function app to 
 Go to e.g.: http://*.azurewebsites.com.
 
+# Remarks
+Although unadvised, setting `PYTHONHTTPSVERIFY` to `false` circumpasses SSL certificate verification when behind proxy firewall. Installing the required certificates in `certifi`, local truststore or poetry configuration is preferred.
+
 # TODO:
+- create interface for Redis and Pinecone database
+- try [uv](https://github.com/astral-sh/uv) instead of Poetry.
 - devops pipeline
 - integration test
 - create package from model and handler so that I can use it in Docker image

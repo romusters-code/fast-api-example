@@ -11,11 +11,10 @@ python = "^3.12"
 fastapi = { version = "0.115.2", extras = ["all"] }
 torch = "2.3.1"
 transformers = "4.45.2"
-pre-commit = "^4.0.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "8.3.3"
-pre-commit = " 4.0.1"
+pre-commit = "4.0.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
