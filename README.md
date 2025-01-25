@@ -16,6 +16,7 @@ Personal code to showcase my abilities, such as:
 
 # Prerequisites
 - Python 3.12 and Pip/Poetry
+- Pyenv
 - Docker
 - Terraform
 - Azure subscription
@@ -24,8 +25,16 @@ Personal code to showcase my abilities, such as:
 
 
 # How to run
+## Pyenv
+Install correct Python version using Pyenv:
+
+`pyenv install 3.12`
 
 ## Python
+
+`poetry env use $(pyenv which python)`
+`poetry install`
+
 To run the project locally using Python, run:
 
 `poetry run fastapi run app/main.py --host 0.0.0.0 --port 8080`
@@ -73,7 +82,7 @@ Go to e.g.: http://*.azurewebsites.com.
 
 I do have the correct role set for the principal.
 
-
+- make Redis asynchronous
 - devops pipeline
 - integration test
 - create package from model and handler so that I can use it in Docker image
