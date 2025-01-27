@@ -1,65 +1,102 @@
+import json
 import unittest
-from unittest.mock import patch
 
-import pytest
+
+from app.main import app, TextInput
 from fastapi.testclient import TestClient
-
-from app.main import TextInput, app
-
-# Arrange
-client = TestClient(app)
+from parameterized import parameterized
+from tests.payload_tests import long_string_input
+from unittest.mock import patch, MagicMock
 
 
-def test_embed_text(long_string_input):
-    # Act: Send a POST request to the /embed endpoint
-    response = client.post("/embed", json=long_string_input)
+class TestEmbedEndpoint(unittest.TestCase):  
 
-    # Assert the response status code
-    assert response.status_code == 200
-
-    # Assert the response data structure
-    response_data = response.json()
-    assert "embedding" in response_data
-    assert "description" in response_data
-    assert (
-        response_data["description"]
-        == "The list of float values representing the text embedding."
-    )
-
-    # Assert the embedding values
-    assert isinstance(response_data["embedding"], list)
-    assert len(response_data["embedding"]) > 0  # Ensure it's a non-empty list
+    # Arrange
+    def setUp(self):
+        self.client = TestClient(app)
 
 
-text_inputs = [
-    {"text": ""},
-    {"text": "This is a short sentence."},
-    {
-        "text": "This is a longer sentence, which contains more words and should still work correctly."
-    },
-]
+    @patch("app.main.database_object")
+    def test_embed_text_cached(self, mock_database_object):
+        mock_database_object.get_key = MagicMock(return_value=json.dumps([0.1, 0.2, 0.3]))
+
+        # Act: Send a POST request to the /embed endpoint
+        response = self.client.post("/embed", json=long_string_input)
+
+        # Assert the response status code
+        assert response.status_code == 200
+
+        # Assert the response data structure
+        response_data = response.json()
+        assert "embedding" in response_data
+        assert "description" in response_data
+        assert (
+            response_data["description"]
+            == "The list of float values representing the text embedding."
+        )
+
+        # Assert the embedding values
+        assert isinstance(response_data["embedding"], list)
+        assert len(response_data["embedding"]) > 0  # Ensure it's a non-empty list
+        mock_database_object.get_key.assert_called_once_with(long_string_input['text'])
 
 
-@pytest.mark.parametrize("text_input", text_inputs)
-def test_embed_text_parametrized(text_input):
-    # Act: Send a POST request to the /embed endpoint
-    response = client.post("/embed", json=text_input)
+    @patch("app.main.handler")
+    @patch("app.main.database_object")
+    def test_embed_text_not_cached(self, mock_database_object, mock_handler_object):
+        mock_database_object.get_key = MagicMock(return_value=None)
+        mock_handler_object.embed = MagicMock(return_value=[1,2,3])
+        
+        # Act: Send a POST request to the /embed endpoint
+        response = self.client.post("/embed", json=long_string_input)
 
-    # Assert the response status code
-    assert response.status_code == 200
+        # Assert the response status code
+        assert response.status_code == 200
 
-    # Assert the response data structure
-    response_data = response.json()
-    assert "embedding" in response_data
-    assert "description" in response_data
-    assert (
-        response_data["description"]
-        == "The list of float values representing the text embedding."
-    )
+        # Assert the response data structure
+        response_data = response.json()
+        assert "embedding" in response_data
+        assert "description" in response_data
+        assert (
+            response_data["description"]
+            == "The list of float values representing the text embedding."
+        )
 
-    # Assert the embedding values
-    assert isinstance(response_data["embedding"], list)
-    assert len(response_data["embedding"]) > 0  # Ensure it's a non-empty list
+        # Assert the embedding values
+        assert isinstance(response_data["embedding"], list)
+        assert len(response_data["embedding"]) > 0  # Ensure it's a non-empty list
+        mock_database_object.get_key.assert_called_once_with(long_string_input['text'])
+        mock_handler_object.embed.assert_called_once_with(long_string_input['text'])
+
+
+    @parameterized.expand([
+        ({"text": ""}, ),
+        ({"text": "This is a short sentence."}, ),
+        ({
+            "text": "This is a longer sentence, which contains more words and should still work correctly."
+        }, ),
+    ])
+    @patch("app.main.database_object")
+    def test_embed_text_parametrized(self, text_input, mock_database_object):
+        mock_database_object.get_key = MagicMock(return_value=None)
+        # Act: Send a POST request to the /embed endpoint
+        response = self.client.post("/embed", json=text_input)
+
+        # Assert the response status code
+        assert response.status_code == 200
+
+        # Assert the response data structure
+        response_data = response.json()
+        assert "embedding" in response_data
+        assert "description" in response_data
+        assert (
+            response_data["description"]
+            == "The list of float values representing the text embedding."
+        )
+
+        # Assert the embedding values
+        assert isinstance(response_data["embedding"], list)
+        assert len(response_data["embedding"]) > 0  # Ensure it's a non-empty list
 
 
 class TestCalculateSimilarity(unittest.TestCase):

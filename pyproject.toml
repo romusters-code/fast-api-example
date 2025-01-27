@@ -14,6 +14,7 @@ transformers = "4.45.2"
 pre-commit = "^4.0.1"
 redis = "^5.2.0"
 requests = "2.31.0"
+parameterized = "^0.9.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "8.3.3"
