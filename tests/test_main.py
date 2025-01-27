@@ -1,12 +1,17 @@
 import json
 import unittest
 
+from dotenv import load_dotenv
+load_dotenv()  # This will load variables from .env
 
-from app.main import app, TextInput
+from app.main import app
+from app.schemas.default import TextInput
 from fastapi.testclient import TestClient
 from parameterized import parameterized
 from tests.payload_tests import long_string_input
 from unittest.mock import patch, MagicMock
+
+
 
 
 class TestEmbedEndpoint(unittest.TestCase):  
@@ -16,7 +21,7 @@ class TestEmbedEndpoint(unittest.TestCase):
         self.client = TestClient(app)
 
 
-    @patch("app.main.database_object")
+    @patch("app.api.endpoints.embed.database_object")
     def test_embed_text_cached(self, mock_database_object):
         mock_database_object.get_key = MagicMock(return_value=json.dumps([0.1, 0.2, 0.3]))
 
@@ -41,8 +46,8 @@ class TestEmbedEndpoint(unittest.TestCase):
         mock_database_object.get_key.assert_called_once_with(long_string_input['text'])
 
 
-    @patch("app.main.handler")
-    @patch("app.main.database_object")
+    @patch("app.api.endpoints.embed.handler")
+    @patch("app.api.endpoints.embed.database_object")
     def test_embed_text_not_cached(self, mock_database_object, mock_handler_object):
         mock_database_object.get_key = MagicMock(return_value=None)
         mock_handler_object.embed = MagicMock(return_value=[1,2,3])
@@ -76,7 +81,7 @@ class TestEmbedEndpoint(unittest.TestCase):
             "text": "This is a longer sentence, which contains more words and should still work correctly."
         }, ),
     ])
-    @patch("app.main.database_object")
+    @patch("app.api.endpoints.embed.database_object")
     def test_embed_text_parametrized(self, text_input, mock_database_object):
         mock_database_object.get_key = MagicMock(return_value=None)
         # Act: Send a POST request to the /embed endpoint
@@ -103,7 +108,7 @@ class TestCalculateSimilarity(unittest.TestCase):
     def setUp(self):
         self.client = TestClient(app)
 
-    @patch("app.main.handler.similarity")  # Mock the similarity function
+    @patch("app.api.endpoints.embed.handler.similarity")  # Mock the similarity function
     def test_calculate_similarity(self, mock_similarity):
         # Arrange
         text_1 = TextInput(text="Dog")

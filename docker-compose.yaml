@@ -10,16 +10,14 @@ services:
       - REDIS_HOST=redis  # Redis hostname (will be used in FastAPI to connect to Redis)
       - REDIS_PORT=6379   # Default Redis port
       - PYTHONHTTPSVERIFY=0
-      # - REQUESTS_CA_BUNDLE=""
     depends_on:
       - redis            
     ports:
       - "8080:8080"
-    # network_mode: host
+
 
   redis:
     image: "redis:latest"  
     container_name: redis_cache
     ports:
       - "6379:6379"  # Expose Redis on port 6379
-    # network_mode: host
