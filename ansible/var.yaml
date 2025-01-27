@@ -1,0 +1,4 @@
+git_user_name: "Your Name"
+git_user_email: "youremail@example.com"
+pycharm_version: "2023.2.1"  # Replace with desired PyCharm version
+pycharm_edition: "community"  # Change to "community" for Community Edition

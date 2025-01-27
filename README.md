@@ -24,7 +24,7 @@ Personal code to showcase my abilities, such as:
 - Hadolint binary (when using pre-commit)
 
 ## Ansible
-Ansible can be used to install prerequisites: `ansible-playbook ansible.yaml --ask-become-pass`
+Ansible can be used to install prerequisites: `ansible-playbook ansible/ansible.yaml --ask-become-pass -e @ansible/var.yaml`
 
 
 # How to run
