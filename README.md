@@ -23,6 +23,9 @@ Personal code to showcase my abilities, such as:
 - Pre-commit
 - Hadolint binary (when using pre-commit)
 
+## Ansible
+Ansible can be used to install prerequisites: `ansible-playbook ansible.yaml --ask-become-pass`
+
 
 # How to run
 ## Pyenv
@@ -75,12 +78,16 @@ To rebuild, run: `docker compose up --build`
 Use the function app to 
 Go to e.g.: http://*.azurewebsites.com.
 
+# Remarks
+Although unadvised, setting `PYTHONHTTPSVERIFY` to `false` circumpasses SSL certificate verification when behind proxy firewall. Installing the required certificates in `certifi`, local truststore or poetry configuration is preferred.
+
 # TODO:
 - fix infra bug:  [DEBUG] POST https://management.azure.com/subscriptions/<subscription>/resourceGroups/rg20embedding001/providers/Microsoft.App/containerApps/ca20embedding001/listSecrets?api-version=2023-05-01 (status: 500): retrying in 1s (9 left)
 
 I do have the correct role set for the principal.
 
 - make Redis asynchronous
+- create interface for Redis and Pinecone database
 - devops pipeline
 - integration test
 - create package from model and handler so that I can use it in Docker image

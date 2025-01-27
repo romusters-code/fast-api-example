@@ -20,13 +20,13 @@ ENV POETRY_NO_INTERACTION=1 \
     POETRY_CACHE_DIR='/var/cache/pypoetry' \
     POETRY_HOME='/usr/local' 
 
-
 RUN poetry install --no-cache
 
 COPY app /app
 
-EXPOSE 81
+EXPOSE 8080
 ENV PYTHONHTTPSVERIFY=0
+# If there are certificates, add them
 RUN cat /app/certificates.crt >> /usr/local/lib/python3.12/site-packages/certifi/cacert.pem
 
 CMD ["poetry", "run", "fastapi", "run", "main.py", "--port", "8080"]

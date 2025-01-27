@@ -1,0 +1,128 @@
+---
+- name: Set up ML Ops Environment
+  hosts: localhost
+  become: true
+
+  vars:
+    pyenv_root: "~/.pyenv"
+    python_version: "3.12"
+
+  tasks:
+
+    # Ensure system is updated
+    - name: Update and upgrade the system
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    # Install essential packages
+    - name: Install essential development tools
+      apt:
+        name:
+          - build-essential
+          - curl
+          - git
+          - libssl-dev
+          - zlib1g-dev
+          - libbz2-dev
+          - libreadline-dev
+          - libsqlite3-dev
+          - wget
+          - llvm
+          - libncurses5-dev
+          - libncursesw5-dev
+          - xz-utils
+          - tk-dev
+          - libffi-dev
+          - liblzma-dev
+          - python3-openssl
+          - docker.io
+          - docker-compose
+          - unzip
+        state: present
+
+    # Install Pyenv
+    - name: Clone pyenv repository
+      git:
+        repo: "https://github.com/pyenv/pyenv.git"
+        dest: "{{ pyenv_root }}"
+        update: no
+
+    - name: Set up pyenv environment variables
+      copy:
+        dest: ~/.bashrc
+        content: |
+          export PYENV_ROOT="{{ pyenv_root }}"
+          export PATH="$PYENV_ROOT/bin:$PATH"
+          eval "$(pyenv init --path)"
+        owner: "{{ ansible_user_id }}"
+        mode: 0644
+      notify:
+        - Reload bashrc
+
+    - name: Install Python {{ python_version }} using pyenv
+      shell: |
+        source ~/.bashrc && \
+        pyenv install {{ python_version }} && \
+        pyenv global {{ python_version }}
+      args:
+        executable: /bin/bash
+
+    # Install Poetry
+    - name: Install Poetry
+      shell: |
+        curl -sSL https://install.python-poetry.org | python3 -
+      args:
+        executable: /bin/bash
+
+    # Install Terraform
+    - name: Download Terraform
+      shell: |
+        curl -fsSL https://releases.hashicorp.com/terraform/1.5.0/terraform_1.5.0_linux_amd64.zip -o terraform.zip
+        unzip terraform.zip -d /usr/local/bin/
+        rm terraform.zip
+      args:
+        executable: /bin/bash
+
+    # Install Azure CLI
+    - name: Install Azure CLI
+      shell: |
+        curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+      args:
+        executable: /bin/bash
+
+    # Install Google Cloud CLI
+    - name: Install Google Cloud CLI
+      shell: |
+        echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+        curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+        sudo apt update && sudo apt install -y google-cloud-sdk
+      args:
+        executable: /bin/bash
+
+    # Install Hadolint
+    - name: Install Hadolint
+      shell: |
+        wget -O /usr/local/bin/hadolint https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64
+        chmod +x /usr/local/bin/hadolint
+      args:
+        executable: /bin/bash
+
+    # Verify Docker Installation
+    - name: Add user to Docker group
+      user:
+        name: "{{ ansible_user_id }}"
+        groups: docker
+        append: yes
+
+    - name: Enable Docker service
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+  handlers:
+    - name: Reload bashrc
+      shell: source ~/.bashrc
+      args:
+        executable: /bin/bash

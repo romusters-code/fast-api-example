@@ -29,7 +29,11 @@ Push:
 
 Login:
 
-`az login terraform`
+`az login`
+
+Navigate to the infra folder:
+
+`cd infra`
 
 Init:
 
