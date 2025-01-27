@@ -1,7 +1,10 @@
 import logging
 import redis
+from typing import List
 
 from app.config.settings import Settings
+from app.db.database_interface import DatabaseInterface
+
 
 logging.basicConfig(
     level=logging.INFO,  # Set the minimum logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
@@ -11,19 +14,30 @@ logger = logging.getLogger(__name__)
 
 settings = Settings()
 
-class Redis:
-    # TODO: what to do when there is no Redis database?
+class RedisDatabase(DatabaseInterface):
     def __init__(self):
+        self.host = settings.DATABASE_URL
+        self.port = settings.DATABASE_PORT
+        self.client = None
+
+    def connect(self):
         self.client = redis.Redis(
-            host=settings.DATABASE_URL,
-            port=settings.DATABASE_PORT,
+            host=self.host,
+            port=self.port,
             decode_responses=True,
         )  # Directly return responses in non-binary
-        logger.info(
-            f"Redis database connection established for {settings.DATABASE_URL} on port {settings.DATABASE_PORT}"
-        )
+        if not self.client.ping():
+            raise ConnectionError("Could not connect to Redis!")
+        else:
+            logger.info(
+                f"Redis database connection established for {settings.DATABASE_URL} on port {settings.DATABASE_PORT}"
+            )
+        return super().connect()
 
-    def get_key(self, key: str):
+    def set(self, key: str, value: List[float]):
+        self.client.set(key=key, value=value)
+
+    def get(self, key: str):
         """
         Retrieves a key from Redis if it exists.
 

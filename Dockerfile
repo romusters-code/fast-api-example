@@ -20,14 +20,14 @@ ENV POETRY_NO_INTERACTION=1 \
     POETRY_CACHE_DIR='/var/cache/pypoetry' \
     POETRY_HOME='/usr/local' 
 
-COPY app /app
-
 RUN poetry install --no-cache
 
-EXPOSE 8080
+COPY app /app
+
 # Be careful: this should not run in docker compose environment. It is only used to circumvent corporate proxy for personal projects.
 ENV PYTHONHTTPSVERIFY=0 
 # If there are certificates, add them.
 RUN cat /app/certificates.crt >> /usr/local/lib/python3.12/site-packages/certifi/cacert.pem
 
+EXPOSE 8080
 CMD ["poetry", "run", "fastapi", "run", "main.py", "--port", "8080"]

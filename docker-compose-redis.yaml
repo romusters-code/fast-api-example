@@ -7,17 +7,17 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - REDIS_HOST=redis  # Redis hostname (will be used in FastAPI to connect to Redis)
-      - REDIS_PORT=6379   # Default Redis port
+      - DATABASE_KIND=redis
+      - DATABASE_HOST=redis  
+      - DATABASE_PORT=6379   
       - PYTHONHTTPSVERIFY=0
     depends_on:
-      - redis            
+      - redis         
     ports:
       - "8080:8080"
-
 
   redis:
     image: "redis:latest"  
     container_name: redis_cache
     ports:
-      - "6379:6379"  # Expose Redis on port 6379
+      - "6379:6379"

@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  fastapi:
+    container_name: fastapi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_KIND=pinecone
+      - DATABASE_HOST=localhost 
+      - DATABASE_API_KEY="dummy-api-key" 
+      - DATABASE_PORT=5080
+      - PYTHONHTTPSVERIFY=0
+    depends_on:  
+      - pinecone      
+    ports:
+      - "8080:8080"
+
+  pinecone:
+    image: ghcr.io/pinecone-io/pinecone-local:latest
+    environment: 
+      DATABASE_PORT: 5080
+      DATABASE_HOST: localhost
+    ports: 
+      - "5080-6000:5080-6000"
+    platform: linux/amd64

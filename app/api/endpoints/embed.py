@@ -1,7 +1,8 @@
 import json
 import logging
 
-from app.db.database import Redis
+from app.config.settings import Settings
+from app.db.database_interface_factory import DatabaseFactory
 from app.model import Handler
 from app.schemas.default import TextInput, EmbeddingOutput, SimilarityOutput
 from fastapi import HTTPException
@@ -16,7 +17,10 @@ logger = logging.getLogger(__name__)
 
 embed_router = APIRouter()
 
-database_object = Redis()
+settings = Settings()
+database_object = DatabaseFactory.get_database(settings.DATABASE_KIND) # Switch between databases easily using an interface.
+database_object.connect()
+
 handler = Handler()
 
 
@@ -30,7 +34,7 @@ async def embed_text(text_input: TextInput) -> EmbeddingOutput:
     """
     logger.info(f"Embedding text: {text_input.text}")
     
-    cached_embedding =  database_object.get_key(text_input.text)
+    cached_embedding =  database_object.get(text_input.text)
     if cached_embedding:
         logging.info(f"Retrieving cached embedding for: {text_input.text[0:10]}...")
         return EmbeddingOutput(

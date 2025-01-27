@@ -64,8 +64,12 @@ Redis can be used as a backend to cache FastAPI requests.
 
 Start the FastAPI and Redis database using: `docker compose up`
 
-To rebuild, run: `docker compose up --build`
+To rebuild, run e.g.: `docker compose --env-file .env --file docker-compose-pinecone.yaml up --build`
 
+> **_NOTE:_** **The code works independent on choice of database**. 
+Two databases are currently supported. 
+Additional databases could be added by implementing the interface. 
+The corresponding docker compose files are: `-redis` and `-pinecone`. 
 
 ## Cloud
 
