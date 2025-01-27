@@ -1,6 +1,5 @@
 import json
 import logging
-from contextlib import asynccontextmanager
 from os import environ
 
 import redis
@@ -73,19 +72,19 @@ async def embed_text(text_input: TextInput) -> EmbeddingOutput:
     :return: The embedding of the input text as JSON.
     """
     logger.info(f"Embedding text: {text_input.text}")
-    logging.info(f"text_input.text: {text_input.text}")
     
     cached_embedding =  database_object.get_key(text_input.text)
-    logging.info(f"cached_embedding: {cached_embedding}")
-    logging.info(f"type cached_embedding: {type(cached_embedding)}")
     if cached_embedding:
+        logging.info(f"Retrieving cached embedding for: {text_input.text[0:10]}...")
         return EmbeddingOutput(
             embedding=json.loads(cached_embedding),
             description="The list of float values representing the text embedding.",
         )
     else:
         try:
+            logging.info(f"Generating embedding for: {text_input.text[0:10]}...")
             embedding = handler.embed(text_input.text)
+            logging.info(f"Setting embedding for: {text_input.text[0:10]}...")
             database_object.client.set(text_input.text, json.dumps(embedding))
             return EmbeddingOutput(
                 embedding=embedding,

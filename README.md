@@ -39,9 +39,7 @@ To run the project locally using Python, run:
 
 `poetry run fastapi run app/main.py --host 0.0.0.0 --port 8080`
 
-TODO: try [uv](https://github.com/astral-sh/uv) instead of Poetry.
-
-Go to e.g.: http://0.0.0.0:81/docs
+Go to e.g.: http://0.0.0.0:8080/docs
 
 ## Tests
 
@@ -87,4 +85,5 @@ I do have the correct role set for the principal.
 - integration test
 - create package from model and handler so that I can use it in Docker image
 - caching requests for FastAPI using external database
+- try [uv](https://github.com/astral-sh/uv) instead of Poetry.
 
