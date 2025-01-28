@@ -36,20 +36,13 @@
           - libffi-dev
           - liblzma-dev
           - python3-openssl
-          - docker.io
-          - docker-compose
           - unzip
         state: present
         
-    - name: Configure Git user name
-      command: >
-        git config --global user.name "{{ git_user_name }}"
-      when: git_user_name is defined
-
-    - name: Configure Git user email
-      command: >
-        git config --global user.email "{{ git_user_email }}"
-      when: git_user_email is defined
+    - name: Verify Git installation
+      command: git --version
+      register: git_version
+      
 
     # Install Pyenv
     - name: Clone pyenv repository
@@ -73,7 +66,7 @@
     - name: Install Python {{ python_version }} using pyenv
       shell: |
         source ~/.bashrc && \
-        pyenv install {{ python_version }} && \
+        pyenv install -s {{ python_version }} && \
         pyenv global {{ python_version }}
       args:
         executable: /bin/bash
@@ -84,15 +77,31 @@
         curl -sSL https://install.python-poetry.org | python3 -
       args:
         executable: /bin/bash
-
-    # Install Terraform
+        
     - name: Download Terraform
-      shell: |
-        curl -fsSL https://releases.hashicorp.com/terraform/1.5.0/terraform_1.5.0_linux_amd64.zip -o terraform.zip
-        unzip terraform.zip -d /usr/local/bin/
-        rm terraform.zip
-      args:
-        executable: /bin/bash
+      get_url:
+          url: https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_amd64.zip
+          dest: /tmp/terraform.zip
+
+    - name: Unzip Terraform
+      unarchive:
+        src: /tmp/terraform.zip
+        dest: /usr/local/bin/
+        remote_src: yes
+
+    - name: Cleanup Terraform zip file
+      file:
+        path: /tmp/terraform.zip
+        state: absent
+
+    - name: Verify Terraform installation
+      shell: terraform -version
+      register: terraform_version_output
+      changed_when: false
+
+    - name: Show Terraform version
+      debug:
+        msg: "{{ terraform_version_output.stdout }}"
 
     # Install Azure CLI
     - name: Install Azure CLI
@@ -118,18 +127,29 @@
       args:
         executable: /bin/bash
 
-    # Verify Docker Installation
-    - name: Add user to Docker group
-      user:
-        name: "{{ ansible_user_id }}"
-        groups: docker
-        append: yes
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
 
-    - name: Enable Docker service
-      systemd:
-        name: docker
-        enabled: yes
-        state: started
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release | lower }} stable"
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: latest
+
+    - name: Verify Docker installation
+      command: docker --version
+      register: docker_version_output
+      changed_when: false
+
+    - name: Show Docker version
+      debug:
+        msg: "{{ docker_version_output.stdout }}"
 
     - name: Determine PyCharm download URL
       set_fact:
@@ -149,7 +169,7 @@
 
     - name: Create symbolic link for PyCharm
       file:
-        src: "/opt/pycharm-{{ pycharm_version }}/bin/pycharm.sh"
+        src: "/opt/pycharm-{{ pycharm_edition }}-{{ pycharm_version }}/bin/pycharm.sh"
         dest: "/usr/local/bin/pycharm"
         state: link
 
@@ -164,10 +184,46 @@
         msg: >
           "PyCharm {{ pycharm_edition }} edition installed in /opt/pycharm-{{ pycharm_version }}.
           Launch using 'pycharm' command."
+    
+    - name: Create a desktop shortcut for PyCharm (Optional)
+      copy:
+        dest: "/usr/share/applications/pycharm.desktop"
+        content: |
+          [Desktop Entry]
+          Version=1.0
+          Name=PyCharm Community Edition
+          Comment=The Python IDE for Professional Developers
+          Exec=/opt/pycharm-community-{{ pycharm_version }}/bin/pycharm.sh %f
+          Icon=/opt/pycharm-community-{{ pycharm_version }}/bin/pycharm.png
+          Terminal=false
+          Type=Application
+          Categories=Development;IDE;
+          StartupWMClass=jetbrains-pycharm
+        mode: '0644'
+    
+    - name: Verify PyCharm installation
+      command: pycharm --version
+      register: pycharm_version_output
+      changed_when: false
 
-    - name: Verify Git installation
-      command: git --version
-      register: git_version
+    - name: Create src directory
+      file:
+        path: ~/virtualenvs
+        state: directory
+        mode: '0755'
+
+    - name: Create bin directory
+      file:
+        path: ~/repositories
+        state: directory
+        mode: '0755'
+
+    - name: Create config directory
+      file:
+        path: ~/data
+        state: directory
+        mode: '0755'
+
 
   handlers:
     - name: Reload bashrc
