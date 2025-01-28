@@ -1,50 +1,28 @@
-# Introduction
+# Google
 
-Terraform is infrastructure as code tool. The infrastructure we are making here contains a Docker registry and a Function app amongst other resources.
-The Function App uses a Docker container which needs to be available first, so we build and push it in the next section. We might also choose to create a DevOps pipeline to do this for us.
-Build and push Docker container so that it can be used in function app.
+To deploy the infra on Google, first authenticate:
 
-## How to run
+`gcloud auth application-default login`
 
-### Docker
+Set the project id:
 
-Build: 
+`gcloud config set project <project_id>`
 
-`docker build -f Dockerfile -t embedding_service:latest . `
+Enable gcloud service 'artifactregistry.googleapis.com':
 
+`gcloud services enable artifactregistry.googleapis.com`
 
-Login: 
+`terraform init`
 
-`az acr login --name EmbeddingContainerRegistry `
-
-Tag: 
-
-`docker tag embedding_service:latest embeddingcontainerregistry.azurecr.io/embedding_service:latest`
-
-Push: 
-
-`docker push embeddingcontainerregistry.azurecr.io/embedding_service:latest`
-
-### Terraform
-
-Login:
-
-`az login`
-
-Navigate to the infra folder:
-
-`cd infra`
-
-Init:
-
-`terraform init` 
-
-Plan:
-
-`terraform plan` 
-
-
-Apply:
+`terraform plan`
 
 `terraform apply`
 
+## Push Docker container
+
+
+`gcloud auth configure-docker europe-west4-docker.pkg.dev`
+
+## Github Actions
+
+The infrastructure can also be deployed using Github Actions
