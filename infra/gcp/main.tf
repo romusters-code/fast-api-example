@@ -76,12 +76,33 @@ resource "google_cloud_run_service" "fastapi_service" {
   template {
     spec {
       containers {
+        
         image = "${google_artifact_registry_repository.container_registry.location}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.container_registry.name}/fastapi:latest"
         resources {
           limits = {
-            memory = "512Mi"
+            memory = "2048Mi"
             cpu    = "1"
           }
+        }
+        env {
+          name  = "DATABASE_URL"
+          value = "value1"
+        }
+        env {
+          name  = "DATABASE_PORT"
+          value = "value2"
+        }
+        env {
+          name  = "DATABASE_KIND"
+          value = "value3"
+        }
+        env {
+          name  = "DATABASE_API_KEY"
+          value = "value3"
+        }
+        env {
+          name  = "CACHE_ENABLED"
+          value = false
         }
       }
       service_account_name = google_service_account.cloud_run_service_account.email
