@@ -91,10 +91,8 @@ Although unadvised, setting `PYTHONHTTPSVERIFY` to `false` circumpasses SSL cert
 I do have the correct role set for the principal.
 
 - make Redis asynchronous
-- create interface for Redis and Pinecone database
 - devops pipeline
 - integration test
 - create package from model and handler so that I can use it in Docker image
-- caching requests for FastAPI using external database
 - try [uv](https://github.com/astral-sh/uv) instead of Poetry.
 
