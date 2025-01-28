@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   fastapi:
     container_name: fastapi
@@ -8,8 +6,8 @@ services:
       dockerfile: Dockerfile
     environment:
       - DATABASE_KIND=pinecone
-      - DATABASE_HOST=localhost 
-      - DATABASE_API_KEY="dummy-api-key" 
+      - DATABASE_HOST=http://localhost 
+      - DATABASE_API_KEY="pclocal" 
       - DATABASE_PORT=5080
       - PYTHONHTTPSVERIFY=0
     depends_on:  
