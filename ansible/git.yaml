@@ -12,3 +12,4 @@
         name: user.email
         value: "{{ git_user_email }}"
         scope: global
+

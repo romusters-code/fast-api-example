@@ -137,15 +137,37 @@
         repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release | lower }} stable"
         state: present
 
-    - name: Install Docker
+    - name: install docker
       apt:
-        name: docker-ce
+        name: "{{item}}"
         state: latest
+        update_cache: yes
+      loop:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+
+    - name: check docker is active
+      service:
+        name: docker
+        state: started
+        enabled: yes
 
     - name: Verify Docker installation
       command: docker --version
       register: docker_version_output
       changed_when: false
+
+    - name: Ensure group "docker" exists
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+    - name: Add user to Docker group
+      user:
+        name: "blpasd"
+        groups: docker
+        append: true
 
     - name: Show Docker version
       debug:
@@ -224,7 +246,13 @@
         state: directory
         mode: '0755'
 
-
+    - name: Reboot for Docker to work
+      ansible.builtin.debug:
+        msg:
+          - "Reboot for Docker to work"
+          - "https://docs.docker.com/engine/install/ubuntu/"
+          - "https://stackoverflow.com/questions/75713844/how-to-resolve-failed-to-create-nat-chain-docker-as-reboot-not-working"
+          - " sudo journalctl -u docker"
   handlers:
     - name: Reload bashrc
       shell: source ~/.bashrc

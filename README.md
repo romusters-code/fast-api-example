@@ -2,16 +2,16 @@
 Personal code to showcase my abilities, such as:
 1. Software Engineering in Python:
 
-   2. Code (e.g. design patterns)
-   
-   3. Tests (unit and integration)
-   
-   4. Project tooling (pre-commit, Ruff)
-   
+    2. Code (e.g. design patterns)
+
+    3. Tests (unit and integration)
+
+    4. Project tooling (pre-commit, Ruff)
+
 2. Docker
 3. Terraform
 4. Cloud Engineering
-5. DevOps 
+5. DevOps
 
 
 # Prerequisites
@@ -66,10 +66,10 @@ Start the FastAPI and Redis database using: `docker compose up`
 
 To rebuild, run e.g.: `docker compose --env-file .env --file docker-compose-pinecone.yaml up --build`
 
-> **_NOTE:_** **The code works independent on choice of database**. 
-Two databases are currently supported. 
-Additional databases could be added by implementing the interface. 
-The corresponding docker compose files are: `-redis` and `-pinecone`. 
+> **_NOTE:_** **The code works independent on choice of database**.
+Two databases are currently supported.
+Additional databases could be added by implementing the interface.
+The corresponding docker compose files are: `-redis` and `-pinecone`.
 
 ## Cloud
 
@@ -79,7 +79,7 @@ The corresponding docker compose files are: `-redis` and `-pinecone`.
 
 
 ### Azure
-Use the function app to 
+Use the function app to
 Go to e.g.: http://*.azurewebsites.com.
 
 # Remarks
