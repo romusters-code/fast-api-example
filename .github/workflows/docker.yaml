@@ -41,5 +41,4 @@ jobs:
         run: |
           docker buildx build \
             --push \
-            --tag 
-            $ARTIFACT_REPO_NAME/$PROJECT_ID/$REPO_NAME/$IMAGE_NAME:$TAG .
+            --tag $ARTIFACT_REPO_NAME/$PROJECT_ID/$REPO_NAME/$IMAGE_NAME:$TAG .
