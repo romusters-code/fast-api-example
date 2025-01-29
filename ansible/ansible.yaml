@@ -110,7 +110,7 @@
       args:
         executable: /bin/bash
 
-    # Install Google Cloud CLI
+    # TODO: install using apt_key
     - name: Install Google Cloud CLI
       shell: |
         echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
@@ -126,52 +126,6 @@
         chmod +x /usr/local/bin/hadolint
       args:
         executable: /bin/bash
-
-    - name: Add Docker GPG key
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
-
-    - name: Add Docker repository
-      apt_repository:
-        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release | lower }} stable"
-        state: present
-
-    - name: install docker
-      apt:
-        name: "{{item}}"
-        state: latest
-        update_cache: yes
-      loop:
-        - docker-ce
-        - docker-ce-cli
-        - containerd.io
-
-    - name: check docker is active
-      service:
-        name: docker
-        state: started
-        enabled: yes
-
-    - name: Verify Docker installation
-      command: docker --version
-      register: docker_version_output
-      changed_when: false
-
-    - name: Ensure group "docker" exists
-      ansible.builtin.group:
-        name: docker
-        state: present
-
-    - name: Add user to Docker group
-      user:
-        name: "blpasd"
-        groups: docker
-        append: true
-
-    - name: Show Docker version
-      debug:
-        msg: "{{ docker_version_output.stdout }}"
 
     - name: Determine PyCharm download URL
       set_fact:
@@ -246,6 +200,69 @@
         state: directory
         mode: '0755'
 
+    - name: Install GitHub CLI
+      apt:
+        name: gh
+        state: latest
+
+    - name: Verify GitHub CLI installation
+      command: gh --version
+      register: gh_version_output
+      changed_when: false
+      
+    - name: Show GitHub CLI version
+      debug:
+        msg: "GitHub CLI version: {{ gh_version_output.stdout }}"
+    
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release | lower }} stable"
+        state: present
+
+    - name: install docker
+      apt:
+        name: "{{item}}"
+        state: latest
+        update_cache: yes
+      loop:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+
+    - name: Verify Docker installation
+      command: docker --version
+      register: docker_version_output
+      changed_when: false
+      
+    - name: Show Docker version
+      debug:
+        msg: "{{ docker_version_output.stdout }}"
+        
+    - name: Ensure group "docker" exists
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+    - name: Add user to Docker group
+      user:
+        name: "blpasd"
+        groups: docker
+        append: true
+        
+        
+    - name: check docker is active
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+
+
     - name: Reboot for Docker to work
       ansible.builtin.debug:
         msg:
@@ -253,6 +270,7 @@
           - "https://docs.docker.com/engine/install/ubuntu/"
           - "https://stackoverflow.com/questions/75713844/how-to-resolve-failed-to-create-nat-chain-docker-as-reboot-not-working"
           - " sudo journalctl -u docker"
+          
   handlers:
     - name: Reload bashrc
       shell: source ~/.bashrc
