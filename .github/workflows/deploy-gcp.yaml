@@ -43,14 +43,15 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
             terraform_version: 1.10.5
+            
       - name: Terraform init and validate
         run: |
             terraform -chdir=infra/gcp init
 
       - name: Terraform plan 
-          run: |
-              terraform -chdir=infra/gcp plan
+        run: |
+            terraform -chdir=infra/gcp plan
 
       - name: Terraform apply 
-          run: |
-              terraform -chdir=infra/gcp apply --auto-approve
+        run: |
+            terraform -chdir=infra/gcp apply --auto-approve
