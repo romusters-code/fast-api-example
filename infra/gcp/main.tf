@@ -27,9 +27,9 @@ provider "google" {
 # The registry already exists
 data "google_artifact_registry_repository" "container_registry" {
   repository_id = "fastapi-docker-repo"
-  format        = "DOCKER"
+#   format        = "DOCKER"
   location      = var.region
-  description   = "Docker repository for FastAPI images"
+#   description   = "Docker repository for FastAPI images"
 }
 
 # Enable necessary APIs
@@ -50,7 +50,7 @@ resource "google_project_service" "artifact_registry_api" {
 
 # IAM Binding for Artifact Registry
 resource "google_artifact_registry_repository_iam_binding" "artifact_registry_binding" {
-  repository = google_artifact_registry_repository.container_registry.name
+  repository = data.google_artifact_registry_repository.container_registry.name
   role       = "roles/artifactregistry.writer"
   members    = ["serviceAccount:${google_service_account.cloud_run_service_account.email}"]
 }
@@ -77,7 +77,7 @@ resource "google_cloud_run_service" "fastapi_service" {
     spec {
       containers {
         
-        image = "${google_artifact_registry_repository.container_registry.location}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.container_registry.name}/fastapi:latest"
+        image = "${data.google_artifact_registry_repository.container_registry.location}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.container_registry.name}/fastapi:latest"
         resources {
           limits = {
             memory = "2048Mi"
