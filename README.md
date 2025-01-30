@@ -89,7 +89,10 @@ Although unadvised, setting `PYTHONHTTPSVERIFY` to `false` circumpasses SSL cert
 - fix infra bug:  [DEBUG] POST https://management.azure.com/subscriptions/<subscription>/resourceGroups/rg20embedding001/providers/Microsoft.App/containerApps/ca20embedding001/listSecrets?api-version=2023-05-01 (status: 500): retrying in 1s (9 left)
 
 I do have the correct role set for the principal.
-
+- create config file which stores Artifact repo name and  is used by Github Action as well as terraform
+- create dummy database to disable cache
+- deploy using terraform
+- test using pipeline
 - make Redis asynchronous
 - devops pipeline
 - integration test

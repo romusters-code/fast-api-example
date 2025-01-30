@@ -1,0 +1,56 @@
+name: Terraform Deployment
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    branches:
+      - main
+  workflow_run:
+    workflows: ["Build and Push to Google Cloud"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+  id-token: 'write'
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  ARTIFACT_REPO_NAME: europe-west4-docker.pkg.dev
+  REPO_NAME: fastapi-docker-repo
+  IMAGE_NAME: fastapi
+  TAG: latest
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate with GCP
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+            terraform_version: 1.10.5
+      - name: Terraform init and validate
+        run: |
+            terraform -chdir=infra/gcp init
+
+      - name: Terraform plan 
+          run: |
+              terraform -chdir=infra/gcp plan
+
+      - name: Terraform apply 
+          run: |
+              terraform -chdir=infra/gcp apply --auto-approve
