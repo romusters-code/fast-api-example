@@ -77,7 +77,7 @@ resource "google_cloud_run_service" "fastapi_service" {
     spec {
       containers {
         
-        image = "${data.google_artifact_registry_repository.container_registry.location}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.container_registry.name}/fastapi:latest"
+        image = "${data.google_artifact_registry_repository.container_registry.location}-docker.pkg.dev/${var.project_id}/${data.google_artifact_registry_repository.container_registry.name}/fastapi:latest"
         resources {
           limits = {
             memory = "2048Mi"
