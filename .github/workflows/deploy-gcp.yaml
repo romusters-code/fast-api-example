@@ -1,12 +1,6 @@
-name: Terraform Deployment
+name: Deploy cloud resources on GCP using Terraform
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
-    branches:
-      - main
   workflow_run:
     workflows: ["Build and Push to Google Cloud"]
     types:
@@ -24,8 +18,8 @@ env:
   TAG: latest
 
 jobs:
-  build-and-push:
-    name: Build and Push Docker Image
+  deploy-gcp-resources:
+    name: Deploy cloud resources on GCP using Terraform
     runs-on: ubuntu-latest
 
     steps:
@@ -40,10 +34,10 @@ jobs:
           service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v3
         with:
             terraform_version: 1.10.5
-            
+
       - name: Terraform init and validate
         run: |
             terraform -chdir=infra/gcp init
