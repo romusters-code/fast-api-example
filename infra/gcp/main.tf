@@ -23,9 +23,17 @@ provider "google" {
   region  = var.region
 }
 
+# Container Registry: Images are stored in Artifact Registry
+# The registry already exists
+data "google_artifact_registry_repository" "container_registry" {
+  repository_id = "fastapi-docker-repo"
+  format        = "DOCKER"
+  location      = var.region
+  description   = "Docker repository for FastAPI images"
+}
 
 # Enable necessary APIs
-resource "google_project_service" "container_registry" {
+resource "google_project_service" "container_registry"  {
   for_each = toset([
     "container.googleapis.com",
     "run.googleapis.com",
@@ -38,14 +46,6 @@ resource "google_project_service" "container_registry" {
 resource "google_project_service" "artifact_registry_api" {
   service = "artifactregistry.googleapis.com"
   project = var.project_id
-}
-
-# Container Registry: Images are stored in Artifact Registry
-resource "google_artifact_registry_repository" "container_registry" {
-  repository_id = "fastapi-docker-repo"
-  format        = "DOCKER"
-  location      = var.region
-  description   = "Docker repository for FastAPI images"
 }
 
 # IAM Binding for Artifact Registry
