@@ -23,6 +23,13 @@ provider "google" {
   region  = var.region
 }
 
+terraform {
+  backend "gcs" {
+    bucket  = "terraform-state-fast-api-example"   
+    prefix  = "terraform/state" # Path within the bucket to store the state file                        
+  }
+}
+
 # Container Registry: Images are stored in Artifact Registry
 # The registry already exists
 data "google_artifact_registry_repository" "container_registry" {
