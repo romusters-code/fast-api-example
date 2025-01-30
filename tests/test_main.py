@@ -1,4 +1,5 @@
 import json
+import os
 import unittest
 
 from dotenv import load_dotenv
@@ -10,6 +11,7 @@ from unittest.mock import MagicMock, patch
 from fastapi.testclient import TestClient
 from parameterized import parameterized
 
+from app.config.settings import Settings
 from app.main import app
 from app.schemas.default import TextInput
 from tests.payload_tests import long_string_input
@@ -20,8 +22,9 @@ class TestEmbedEndpoint(unittest.TestCase):
     def setUp(self):
         self.client = TestClient(app)
 
+    @patch("app.api.endpoints.embed.handler")
     @patch("app.api.endpoints.embed.database_object")
-    def test_embed_text_cached(self, mock_database_object):
+    def test_embed_text_cached(self, mock_database_object, mock_handler_object):
         mock_database_object.get = MagicMock(return_value=json.dumps([0.1, 0.2, 0.3]))
 
         # Act: Send a POST request to the /embed endpoint
@@ -42,7 +45,9 @@ class TestEmbedEndpoint(unittest.TestCase):
         # Assert the embedding values
         assert isinstance(response_data["embedding"], list)
         assert len(response_data["embedding"]) > 0  # Ensure it's a non-empty list
+        assert response_data["embedding"] == [0.1, 0.2, 0.3]
         mock_database_object.get.assert_called_once_with(long_string_input["text"])
+        mock_handler_object.embed.assert_not_called()
 
     @patch("app.api.endpoints.embed.handler")
     @patch("app.api.endpoints.embed.database_object")

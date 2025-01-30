@@ -18,11 +18,11 @@ embed_router = APIRouter()
 
 settings = Settings()
 
-if settings.CACHE_ENABLED:
-    database_object = DatabaseFactory.get_database(
-        settings.DATABASE_KIND
-    )  # Switch between databases easily using an interface.
-    database_object.connect()
+
+database_object = DatabaseFactory.get_database(
+    settings.DATABASE_KIND,
+)  # Switch between databases easily using an interface.
+database_object.connect()
 
 handler = Handler()
 
@@ -35,37 +35,27 @@ async def embed_text(text_input: TextInput) -> EmbeddingOutput:
     :param text_input: The text to embed.
     :return: The embedding of the input text as JSON.
     """
-    logger.info(f"Embedding text: {text_input.text}")
-    if settings.CACHE_ENABLED:
-        cached_embedding = database_object.get(text_input.text)
-        if cached_embedding:
-            logging.info(f"Retrieving cached embedding for: {text_input.text[0:10]}...")
-            return EmbeddingOutput(
-                embedding=json.loads(cached_embedding),
-                description="The list of float values representing the text embedding.",
-            )
-        else:
-            try:
-                logging.info(f"Generating embedding for: {text_input.text[0:10]}...")
-                embedding = handler.embed(text_input.text)
-                logging.info(f"Setting embedding for: {text_input.text[0:10]}...")
-                database_object.client.set(text_input.text, json.dumps(embedding))
-                return EmbeddingOutput(
-                    embedding=embedding,
-                    description="The list of float values representing the text embedding.",
-                )
-            except RuntimeError:
-                HTTPException(
-                    status_code=404,
-                    detail="Something went wrong with creating an embedding.",
-                )
-    else:
-        logging.info(f"Generating embedding for: {text_input.text[0:10]}...")
-        embedding = handler.embed(text_input.text)
+    logger.info(f"Embedding text: {text_input.text[0:10]}")
+    embedding = database_object.get(text_input.text)
+    if embedding:
         return EmbeddingOutput(
-            embedding=embedding,
+            embedding=json.loads(embedding),
             description="The list of float values representing the text embedding.",
         )
+    else:
+        try:
+            embedding = handler.embed(text_input.text)
+            if settings.CACHE_ENABLED:
+                database_object.client.set(text_input.text, json.dumps(embedding))
+            return EmbeddingOutput(
+                embedding=embedding,
+                description="The list of float values representing the text embedding.",
+            )
+        except RuntimeError:
+            HTTPException(
+                status_code=404,
+                detail="Something went wrong with creating an embedding.",
+            )
 
 
 @embed_router.post("/similarity")

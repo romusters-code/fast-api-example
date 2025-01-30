@@ -36,6 +36,7 @@ class RedisDatabase(DatabaseInterface):
         return super().connect()
 
     def set(self, key: str, value: List[float]):
+        logging.info(f"Setting embedding for: {key[0:10]}...")
         self.client.set(key=key, value=value)
 
     def get(self, key: str):
@@ -49,6 +50,7 @@ class RedisDatabase(DatabaseInterface):
         # Check if the key exists
         exists = self.client.exists(key)
         if exists:
+            logging.info(f"Retrieving cached embedding for: {key[0:10]}...")
             # Retrieve the key's value
             value = self.client.get(key)
             return value

@@ -1,5 +1,6 @@
 import logging
 
+from app.db.dummy_database import DummyDatabase
 from app.db.pinecone_database import PineconeDatabase
 from app.db.redis_database import RedisDatabase
 
@@ -17,5 +18,7 @@ class DatabaseFactory:
             return RedisDatabase(**kwargs)
         elif db_type == "pinecone":
             return PineconeDatabase(**kwargs)
+        elif db_type == "dummy":
+            return DummyDatabase(**kwargs)
         else:
             raise ValueError(f"Unsupported database type: {db_type}")

@@ -37,6 +37,7 @@ class Handler:
         """
 
         # Forward pass
+        logging.info(f"Generating embedding for: {text[0:10]}...")
         tensors = self.forward(text)
 
         return tensors.tolist()
