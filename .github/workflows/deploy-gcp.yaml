@@ -1,6 +1,9 @@
 name: Deploy cloud resources on GCP using Terraform
 
 on:
+  push:
+    branches:
+      - main
   workflow_run:
     workflows: ["Build and Push to Google Cloud"]
     types:

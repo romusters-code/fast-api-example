@@ -52,20 +52,19 @@ resource "google_project_service" "artifact_registry_api" {
 resource "google_artifact_registry_repository_iam_binding" "artifact_registry_binding" {
   repository = data.google_artifact_registry_repository.container_registry.name
   role       = "roles/artifactregistry.writer"
-  members    = ["serviceAccount:${google_service_account.cloud_run_service_account.email}"]
+  members    = ["serviceAccount:${data.google_service_account.cloud_run_service_account.email}"]
 }
 
 # Service Account for Cloud Run
-resource "google_service_account" "cloud_run_service_account" {
+data "google_service_account" "cloud_run_service_account" {
   account_id   = "cloud-run-service-account"
-  display_name = "Cloud Run Service Account"
 }
 
 # Grant necessary roles to the Service Account
 resource "google_project_iam_binding" "cloud_run_iam" {
   project = var.project_id
   role    = "roles/run.admin"
-  members = ["serviceAccount:${google_service_account.cloud_run_service_account.email}"]
+  members = ["serviceAccount:${data.google_service_account.cloud_run_service_account.email}"]
 }
 
 # Deploy FastAPI Docker app to Cloud Run
@@ -105,7 +104,7 @@ resource "google_cloud_run_service" "fastapi_service" {
           value = false
         }
       }
-      service_account_name = google_service_account.cloud_run_service_account.email
+      service_account_name = data.google_service_account.cloud_run_service_account.email
     }
   }
 
