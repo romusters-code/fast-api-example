@@ -1,9 +1,10 @@
 name: Build and Push to Google Cloud
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+      workflows: ["Pre-commit and test Python and Docker files"]
+      types:
+        - completed
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}

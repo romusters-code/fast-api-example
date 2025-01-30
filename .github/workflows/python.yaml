@@ -1,0 +1,30 @@
+name: Pre-commit and test Python and Docker files
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  runs-on: ubuntu-latest
+  pre-commit:
+    steps:
+    - uses: actions/checkout@v3 # TODO: only checkout once
+    - uses: actions/setup-python@v3
+    - uses: pre-commit/action@v3.0.1
+
+  test:
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Install dependencies
+      run: |
+        pip install poetry
+        poetry install --no-cache
+    - name: Test with pytest
+      run: |
+        pip install pytest pytest-cov
+        pytest tests/ --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
