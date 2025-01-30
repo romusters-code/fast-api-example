@@ -2,24 +2,23 @@ import json
 import unittest
 
 from dotenv import load_dotenv
+
 load_dotenv()  # This will load variables from .env
+
+from unittest.mock import MagicMock, patch
+
+from fastapi.testclient import TestClient
+from parameterized import parameterized
 
 from app.main import app
 from app.schemas.default import TextInput
-from fastapi.testclient import TestClient
-from parameterized import parameterized
 from tests.payload_tests import long_string_input
-from unittest.mock import patch, MagicMock
 
 
-
-
-class TestEmbedEndpoint(unittest.TestCase):  
-
+class TestEmbedEndpoint(unittest.TestCase):
     # Arrange
     def setUp(self):
         self.client = TestClient(app)
-
 
     @patch("app.api.endpoints.embed.database_object")
     def test_embed_text_cached(self, mock_database_object):
@@ -43,15 +42,14 @@ class TestEmbedEndpoint(unittest.TestCase):
         # Assert the embedding values
         assert isinstance(response_data["embedding"], list)
         assert len(response_data["embedding"]) > 0  # Ensure it's a non-empty list
-        mock_database_object.get.assert_called_once_with(long_string_input['text'])
-
+        mock_database_object.get.assert_called_once_with(long_string_input["text"])
 
     @patch("app.api.endpoints.embed.handler")
     @patch("app.api.endpoints.embed.database_object")
     def test_embed_text_not_cached(self, mock_database_object, mock_handler_object):
         mock_database_object.get = MagicMock(return_value=None)
-        mock_handler_object.embed = MagicMock(return_value=[1,2,3])
-        
+        mock_handler_object.embed = MagicMock(return_value=[1, 2, 3])
+
         # Act: Send a POST request to the /embed endpoint
         response = self.client.post("/embed", json=long_string_input)
 
@@ -70,17 +68,20 @@ class TestEmbedEndpoint(unittest.TestCase):
         # Assert the embedding values
         assert isinstance(response_data["embedding"], list)
         assert len(response_data["embedding"]) > 0  # Ensure it's a non-empty list
-        mock_database_object.get.assert_called_once_with(long_string_input['text'])
-        mock_handler_object.embed.assert_called_once_with(long_string_input['text'])
+        mock_database_object.get.assert_called_once_with(long_string_input["text"])
+        mock_handler_object.embed.assert_called_once_with(long_string_input["text"])
 
-
-    @parameterized.expand([
-        ({"text": ""}, ),
-        ({"text": "This is a short sentence."}, ),
-        ({
-            "text": "This is a longer sentence, which contains more words and should still work correctly."
-        }, ),
-    ])
+    @parameterized.expand(
+        [
+            ({"text": ""},),
+            ({"text": "This is a short sentence."},),
+            (
+                {
+                    "text": "This is a longer sentence, which contains more words and should still work correctly."
+                },
+            ),
+        ]
+    )
     @patch("app.api.endpoints.embed.database_object")
     def test_embed_text_parametrized(self, text_input, mock_database_object):
         mock_database_object.get = MagicMock(return_value=None)

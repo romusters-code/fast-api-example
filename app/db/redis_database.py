@@ -1,10 +1,10 @@
 import logging
-import redis
 from typing import List
+
+import redis
 
 from app.config.settings import Settings
 from app.db.database_interface import DatabaseInterface
-
 
 logging.basicConfig(
     level=logging.INFO,  # Set the minimum logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
@@ -13,6 +13,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 settings = Settings()
+
 
 class RedisDatabase(DatabaseInterface):
     def __init__(self):

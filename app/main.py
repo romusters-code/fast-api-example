@@ -1,11 +1,11 @@
 import logging
 
-from app.api.endpoints.embed import embed_router
 from fastapi import FastAPI
 
+from app.api.endpoints.embed import embed_router
 
 logging.basicConfig(
-    level=logging.INFO, 
+    level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)

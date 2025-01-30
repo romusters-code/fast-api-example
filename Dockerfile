@@ -3,9 +3,9 @@ FROM python:3.12.6-slim-bookworm
 WORKDIR /app
 
 # Adding a package such as 'curl' allows better caching of this layer
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir --upgrade certifi pip poetry  --trusted-host pypi.org --trusted-host files.pythonhosted.org
+RUN pip install --no-cache-dir certifi==2024.12.14 pip==25.0 poetry==2.0.1  --trusted-host pypi.org --trusted-host files.pythonhosted.org
 
 COPY pyproject.toml /app
 
