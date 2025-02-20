@@ -24,9 +24,8 @@ jobs:
         python-version: '3.12'
     - name: Install dependencies
       run: |
-        pip install poetry
-        poetry install --no-cache
+        pip install uv
+        uv sync
     - name: Test with pytest
       run: |
-        poetry install --with dev
-        poetry run pytest tests/ --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+        uv run pytest tests/ --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html

@@ -42,7 +42,7 @@ jobs:
 
       - name: Set Up UV for Publishing
         run: |
-          export UV_PYPI_REGISTRY=https://${{ ARTIFACT_REPO_NAME }}/${{ secrets.GCP_PROJECT_ID }}/${{ env.PYTHON_REGISTRY_NAME }}/
+          export UV_PYPI_REGISTRY=https://${{ env.ARTIFACT_REPO_NAME }}/${{ secrets.GCP_PROJECT_ID }}/${{ env.PYTHON_REGISTRY_NAME }}/
           uv publish
 
       - name: Configure Docker to use Google Artifact Registry
