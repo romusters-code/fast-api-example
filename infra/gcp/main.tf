@@ -55,7 +55,7 @@ resource "google_artifact_registry_repository" "python_registry" {
   repository_id = "python-package"
   description   = "python registry"
   format        = "PYTHON"
-
+}
 
 resource "google_project_service" "artifact_registry_api" {
   service = "artifactregistry.googleapis.com"
