@@ -1,10 +1,10 @@
 import json
 import logging
 
-from app.config.settings import Settings
-from app.db.database_interface_factory import DatabaseFactory
-from app.model import Handler
-from app.schemas.default import EmbeddingOutput, SimilarityOutput, TextInput
+from embedding_api.config.settings import Settings
+from embedding_api.db.database_interface_factory import DatabaseFactory
+from embedding_api.model import Handler
+from embedding_api.schemas.default import EmbeddingOutput, SimilarityOutput, TextInput
 from fastapi import APIRouter, HTTPException
 
 logging.basicConfig(

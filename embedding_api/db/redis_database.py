@@ -2,8 +2,8 @@ import logging
 from typing import List
 
 import redis
-from app.config.settings import Settings
-from app.db.database_interface import DatabaseInterface
+from embedding_api.config.settings import Settings
+from embedding_api.db.database_interface import DatabaseInterface
 
 logging.basicConfig(
     level=logging.INFO,  # Set the minimum logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)

@@ -1,8 +1,8 @@
 import logging
 
-from app.db.dummy_database import DummyDatabase
-from app.db.pinecone_database import PineconeDatabase
-from app.db.redis_database import RedisDatabase
+from embedding_api.db.dummy_database import DummyDatabase
+from embedding_api.db.pinecone_database import PineconeDatabase
+from embedding_api.db.redis_database import RedisDatabase
 
 logging.basicConfig(
     level=logging.INFO,  # Set the minimum logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)

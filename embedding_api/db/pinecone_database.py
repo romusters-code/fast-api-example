@@ -2,8 +2,8 @@ import logging
 import time
 from typing import List
 
-from app.config.settings import Settings
-from app.db.database_interface import DatabaseInterface
+from embedding_api.config.settings import Settings
+from embedding_api.db.database_interface import DatabaseInterface
 from pinecone.grpc import PineconeGRPC as Pinecone
 
 logging.basicConfig(

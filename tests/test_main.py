@@ -8,9 +8,9 @@ load_dotenv()  # This will load variables from .env
 
 from unittest.mock import MagicMock, patch
 
-from app.config.settings import Settings
-from app.main import app
-from app.schemas.default import TextInput
+from embedding_api.config.settings import Settings
+from embedding_api.main import app
+from embedding_api.schemas.default import TextInput
 from fastapi.testclient import TestClient
 from parameterized import parameterized
 
@@ -22,8 +22,8 @@ class TestEmbedEndpoint(unittest.TestCase):
     def setUp(self):
         self.client = TestClient(app)
 
-    @patch("app.api.endpoints.embed.handler")
-    @patch("app.api.endpoints.embed.database_object")
+    @patch("embedding_api.api.endpoints.embed.handler")
+    @patch("embedding_api.api.endpoints.embed.database_object")
     def test_embed_text_cached(self, mock_database_object, mock_handler_object):
         mock_database_object.get = MagicMock(return_value=json.dumps([0.1, 0.2, 0.3]))
 
@@ -49,8 +49,8 @@ class TestEmbedEndpoint(unittest.TestCase):
         mock_database_object.get.assert_called_once_with(long_string_input["text"])
         mock_handler_object.embed.assert_not_called()
 
-    @patch("app.api.endpoints.embed.handler")
-    @patch("app.api.endpoints.embed.database_object")
+    @patch("embedding_api.api.endpoints.embed.handler")
+    @patch("embedding_api.api.endpoints.embed.database_object")
     def test_embed_text_not_cached(self, mock_database_object, mock_handler_object):
         mock_database_object.get = MagicMock(return_value=None)
         mock_handler_object.embed = MagicMock(return_value=[1, 2, 3])
@@ -87,7 +87,7 @@ class TestEmbedEndpoint(unittest.TestCase):
             ),
         ]
     )
-    @patch("app.api.endpoints.embed.database_object")
+    @patch("embedding_api.api.endpoints.embed.database_object")
     def test_embed_text_parametrized(self, text_input, mock_database_object):
         mock_database_object.get = MagicMock(return_value=None)
         # Act: Send a POST request to the /embed endpoint
@@ -114,7 +114,7 @@ class TestCalculateSimilarity(unittest.TestCase):
     def setUp(self):
         self.client = TestClient(app)
 
-    @patch("app.api.endpoints.embed.handler.similarity")  # Mock the similarity function
+    @patch("embedding_api.api.endpoints.embed.handler.similarity")  # Mock the similarity function
     def test_calculate_similarity(self, mock_similarity):
         # Arrange
         text_1 = TextInput(text="Dog")
