@@ -1,12 +1,11 @@
 import json
 import logging
 
-from fastapi import APIRouter, HTTPException
-
 from app.config.settings import Settings
 from app.db.database_interface_factory import DatabaseFactory
 from app.model import Handler
 from app.schemas.default import EmbeddingOutput, SimilarityOutput, TextInput
+from fastapi import APIRouter, HTTPException
 
 logging.basicConfig(
     level=logging.INFO,

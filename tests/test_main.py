@@ -8,12 +8,12 @@ load_dotenv()  # This will load variables from .env
 
 from unittest.mock import MagicMock, patch
 
-from fastapi.testclient import TestClient
-from parameterized import parameterized
-
 from app.config.settings import Settings
 from app.main import app
 from app.schemas.default import TextInput
+from fastapi.testclient import TestClient
+from parameterized import parameterized
+
 from tests.payload_tests import long_string_input
 
 

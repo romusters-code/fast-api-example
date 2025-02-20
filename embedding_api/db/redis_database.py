@@ -2,7 +2,6 @@ import logging
 from typing import List
 
 import redis
-
 from app.config.settings import Settings
 from app.db.database_interface import DatabaseInterface
 
