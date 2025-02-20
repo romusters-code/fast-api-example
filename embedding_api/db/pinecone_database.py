@@ -2,9 +2,10 @@ import logging
 import time
 from typing import List
 
+from pinecone.grpc import PineconeGRPC as Pinecone
+
 from embedding_api.config.settings import Settings
 from embedding_api.db.database_interface import DatabaseInterface
-from pinecone.grpc import PineconeGRPC as Pinecone
 
 logging.basicConfig(
     level=logging.INFO,  # Set the minimum logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)

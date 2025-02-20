@@ -1,7 +1,8 @@
 import logging
 
-from embedding_api.api.endpoints.embed import embed_router
 from fastapi import FastAPI
+
+from embedding_api.api.endpoints.embed import embed_router
 
 logging.basicConfig(
     level=logging.INFO,

@@ -8,12 +8,12 @@ load_dotenv()  # This will load variables from .env
 
 from unittest.mock import MagicMock, patch
 
-from embedding_api.config.settings import Settings
-from embedding_api.main import app
-from embedding_api.schemas.default import TextInput
 from fastapi.testclient import TestClient
 from parameterized import parameterized
 
+from embedding_api.config.settings import Settings
+from embedding_api.main import app
+from embedding_api.schemas.default import TextInput
 from tests.payload_tests import long_string_input
 
 
@@ -114,7 +114,9 @@ class TestCalculateSimilarity(unittest.TestCase):
     def setUp(self):
         self.client = TestClient(app)
 
-    @patch("embedding_api.api.endpoints.embed.handler.similarity")  # Mock the similarity function
+    @patch(
+        "embedding_api.api.endpoints.embed.handler.similarity"
+    )  # Mock the similarity function
     def test_calculate_similarity(self, mock_similarity):
         # Arrange
         text_1 = TextInput(text="Dog")

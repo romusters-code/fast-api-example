@@ -2,6 +2,7 @@ import logging
 from typing import List
 
 import redis
+
 from embedding_api.config.settings import Settings
 from embedding_api.db.database_interface import DatabaseInterface
 
