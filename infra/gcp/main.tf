@@ -50,6 +50,14 @@ resource "google_project_service" "container_registry"  {
   service = each.key
 }
 
+resource "google_artifact_registry_repository" "my-repo" {
+  location      = var.region
+  repository_id = "python-package"
+  description   = "example docker repository"
+  format        = "PYTHON"
+}
+
+
 resource "google_project_service" "artifact_registry_api" {
   service = "artifactregistry.googleapis.com"
   project = var.project_id

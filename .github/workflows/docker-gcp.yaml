@@ -9,7 +9,8 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   ARTIFACT_REPO_NAME: europe-west4-docker.pkg.dev
-  REPO_NAME: fastapi-docker-repo
+  DOCKER_REGISTRY_NAME: fastapi-docker-repo
+  PYTHON_REGISTRY_NAME: handler-python-package
   IMAGE_NAME: fastapi
   TAG: latest
 
@@ -30,6 +31,19 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
+
+      - name: Install UV
+        run: |
+          pip install uv
+
+      - name: Build package
+        run: |
+          uv build
+
+      - name: Set Up UV for Publishing
+        run: |
+          export UV_PYPI_REGISTRY=https://${{ ARTIFACT_REPO_NAME }}/${{ secrets.GCP_PROJECT_ID }}/${{ env.PYTHON_REGISTRY_NAME }}/
+          uv publish
 
       - name: Configure Docker to use Google Artifact Registry
         run: |
