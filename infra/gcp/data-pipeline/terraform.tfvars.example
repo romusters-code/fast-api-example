@@ -1,0 +1,30 @@
+# Example Terraform Configuration for Unpaywall Ingestion Job
+# Copy this to infra/terraform.tfvars and customize for your environment
+
+project_id = "my-gcp-project"
+region     = "us-central1"
+
+# Cloud Storage bucket where papers will be stored
+gcs_bucket = "my-papers-bucket"
+
+# Email registered with Unpaywall API (https://unpaywall.org/products/api)
+unpaywall_email = "your-email@example.com"
+
+# Container image (must be pushed to registry first)
+container_image = "gcr.io/my-gcp-project/unpaywall-ingestion:latest"
+
+# Number of days to look back (1-30)
+# 1 = yesterday's papers, 7 = last week, etc.
+days_back = 1
+
+# Cron schedule: Daily at 2 AM UTC
+# Format: "minute hour day month dayofweek"
+# Examples:
+#   "0 2 * * *"     - Daily at 2 AM
+#   "0 */6 * * *"   - Every 6 hours
+#   "0 2 * * 0"     - Weekly on Sunday at 2 AM
+schedule_frequency = "0 2 * * *"
+
+# Job timeout in seconds (default: 3600 = 1 hour)
+job_timeout = 3600
+
